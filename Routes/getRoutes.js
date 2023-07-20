@@ -2,6 +2,19 @@ const express = require('express');
 const router = express.Router();
 const sql = require('mssql');
 
+//Reportes
+router.get('/getReportes', (req, res) => {
+  console.log("getReportes");
+  sql.query`SELECT id_reporte, descripcion, ubicacion, estado, estado_nuevo, created_at, latitud, longitud, prioridad
+      FROM Reporte`
+  .then(result => {
+    res.json(result.recordset); // Enviamos los resultados en formato JSON
+  }).catch(err => {
+    console.error("Error al hacer consulta:", err);
+    res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
+  });
+});
+
 router.get('/getReportesNoAsignados', (req, res) => {
   sql.query`SELECT id_reporte, descripcion, ubicacion, estado, estado_nuevo, created_at, latitud, longitud, prioridad
       FROM Reporte
@@ -27,9 +40,10 @@ router.get('/getReportesAsignados', (req, res) => {
 });
 
 router.get('/getReportesFinalizados', (req, res) => {
-  sql.query`SELECT id_reporte, descripcion, ubicacion, estado, estado_nuevo, created_at, latitud, longitud, prioridad
+  console.log("getReportesFinalizados");
+  sql.query`SELECT id_reporte, descripcion, ubicacion, estado, estadoNuevo, created_at, latitud, longitud, prioridad
       FROM Reporte
-      WHERE estado_nuevo != 'F';`
+      WHERE estadoNuevo = 'F';`
   .then(result => {
     res.json(result.recordset);
   }).catch(err => {

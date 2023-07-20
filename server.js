@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require('express');
 const sql = require('mssql');
 const app = express();
@@ -6,6 +7,7 @@ const getRoutes = require('./Routes/getRoutes');
 const postRoutes = require('./Routes/postRoutes');
 
 app.use(express.json());
+app.use(cors());
 app.use('/', getRoutes);
 app.use('/', postRoutes);
 
