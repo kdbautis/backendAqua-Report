@@ -14,7 +14,7 @@ router.put('/editarUsuario/:id', (req, res) => {
   
     const updatePromises = [];
   
-    // Agrega la columna `updated_at` en la consulta de actualización
+    //#region 
     if (updateData.nombre) {
       updatePromises.push(
         sql.query`UPDATE Usuario SET nombre = ${updateData.nombre}, updated_at = CURRENT_TIMESTAMP WHERE id_usuario = ${id}`
@@ -44,6 +44,7 @@ router.put('/editarUsuario/:id', (req, res) => {
         sql.query`UPDATE Usuario SET estado = ${updateData.estado}, updated_at = CURRENT_TIMESTAMP WHERE id_usuario = ${id}`
       );
     }
+    //#endregion
   
     Promise.all(updatePromises)
       .then(() => {
@@ -53,7 +54,36 @@ router.put('/editarUsuario/:id', (req, res) => {
         console.error("Error al hacer consulta:", err);
         res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
       });
-  });
+});
+
+router.put('/reasignarUsuarioLectura/:id', (req, res) => {
+  const id = req.params.id;
+  const id_usuario_asignado = req.body.id_usuario_asignado;
   
+  sql.query`UPDATE Lectura SET id_usuario_asignado = ${id_usuario_asignado} WHERE id_lectura = ${id}`
+  .then(result => {
+    res.status(200).send('Usuario reasignado exitosamente!');
+  }
+  ).catch(err => {
+    console.error("Error al hacer consulta:", err);
+    res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
+  }
+  );
+});
+
+router.put('/reasignarUsuarioReporte/:id', (req, res) => {
+  const id = req.params.id;
+  const id_usuario_asignado = req.body.id_usuario_asignado;
+  
+  sql.query`UPDATE Reporte SET id_usuario_asignado = ${id_usuario_asignado} WHERE id_reporte = ${id}`
+  .then(result => {
+    res.status(200).send('Usuario reasignado exitosamente!');
+  }
+  ).catch(err => {
+    console.error("Error al hacer consulta:", err);
+    res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
+  }
+  );
+});
 
 module.exports = router;

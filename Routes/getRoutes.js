@@ -100,4 +100,38 @@ router.get('/getUsuarios', (req, res) => {
   });
 });
 
+router.get('/getLecturasPendientes', (req, res) => {
+  sql.query`SELECT id_lectura, Medidor.id_medidor, latitud, longitud, fecha_ultima_lectura, 
+      ultima_lectura, fecha_creacion, fecha_proxima_lectura, Usuario.nombre, apellido
+      FROM Lectura
+      Join Medidor
+      ON Lectura.id_medidor = Medidor.id_medidor
+      Join Usuario
+      ON Lectura.id_usuario_asignado = Usuario.id_usuario
+      WHERE fecha_proxima_lectura != NULL;`
+  .then(result => {
+    res.json(result.recordset);
+  }).catch(err => {
+    console.error("Error al hacer consulta:", err);
+    res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
+  });
+});
+
+router.get('/getLecturasFinalizadas', (req, res) => {
+  sql.query`SELECT id_lectura, Medidor.id_medidor, latitud, longitud, fecha_ultima_lectura, 
+      ultima_lectura, fecha_creacion, Usuario.nombre, apellido
+      FROM Lectura
+      Join Medidor
+      ON Lectura.id_medidor = Medidor.id_medidor
+      Join Usuario
+      ON Lectura.id_usuario_asignado = Usuario.id_usuario
+      WHERE fecha_proxima_lectura = NULL;`
+  .then(result => {
+    res.json(result.recordset);
+  }).catch(err => {
+    console.error("Error al hacer consulta:", err);
+    res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
+  });
+});
+
 module.exports = router;
