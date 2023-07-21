@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require('express');
 const bodyParser = require('body-parser');
 const sql = require('mssql');
@@ -11,6 +12,7 @@ const deleteRoutes = require('./Routes/deleteRoutes');
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
 app.use('/', getRoutes);
 app.use('/', postRoutes);
 app.use('/', putRoutes);
