@@ -1,13 +1,20 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const sql = require('mssql');
 const app = express();
 const port = 3000;
 const getRoutes = require('./Routes/getRoutes');
 const postRoutes = require('./Routes/postRoutes');
+const putRoutes = require('./Routes/putRoutes');
+const deleteRoutes = require('./Routes/deleteRoutes');
 
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use('/', getRoutes);
 app.use('/', postRoutes);
+app.use('/', putRoutes);
+app.use('/', deleteRoutes);
 
 require('dotenv').config();
 
