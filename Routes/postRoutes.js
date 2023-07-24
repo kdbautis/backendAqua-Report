@@ -13,7 +13,10 @@ router.post('/agregarUsuario', (req, res) => {
     sql.query`INSERT INTO Usuario (nombre, apellido, correo, id_tipo_usuario, estado, created_at)
         VALUES (${nombre}, ${apellido}, ${correo}, ${tipo}, ${estado}, CURRENT_TIMESTAMP);`
     .then(result => {
-        res.status(200).send('Usuario agregado exitosamente!');
+        res.status(200).json({
+            status: 200,
+            message: 'Usuario agregado exitosamente!'
+        });
     }).catch(err => {
         console.error("Error al hacer consulta:", err);
         res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
