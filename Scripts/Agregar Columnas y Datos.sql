@@ -35,6 +35,7 @@ CREATE TABLE Lectura (
   fecha_ultima_lectura DATE,
   fecha_proxima_lectura DATE,
   ultima_lectura DECIMAL(10, 2),
+  repeticion INT,
   estado varchar(2),
   FOREIGN KEY (id_medidor) REFERENCES Medidor(id_medidor),
   FOREIGN KEY (id_usuario_asignado) REFERENCES Usuario(id_usuario)
