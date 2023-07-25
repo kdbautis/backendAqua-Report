@@ -25,28 +25,46 @@ router.post('/agregarUsuario', (req, res) => {
 
 router.post('/agregarMedidor', (req, res) => {
     //console.log(req.body);
-    const { nombre, latitud, longitud} = req.body;
-    sql.query`INSERT INTO Medidor (nombre, latitud, longitud)
-        VALUES (${nombre}, ${latitud}, ${longitud});`
+    const { id, nombre, latitud, longitud} = req.body;
+    sql.query`INSERT INTO Medidor (id_medidor, nombre, latitud, longitud)
+        VALUES (${id}, ${nombre}, ${latitud}, ${longitud});`
     .then(result => {
-        res.status(200).send('Medidor agregado exitosamente!');
+        res.status(200).json({
+            status: 200,
+            message: 'Medidor agregado exitosamente!'
+        });
     }).catch(err => {
         console.error("Error al hacer consulta:", err);
-        res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
+        res.status(500).json(
+            {
+                message: 'Ocurrió un error al hacer la consulta a la base de datos',
+                error: err,
+                status : 500
+            }
+        );
     });
 });
 
 router.post('/agregarLectura', (req, res) => {
     //console.log(req.body);
-    const { medidor, usuario, fechaLectura, repeticion} = req.body;
-    sql.query`INSERT INTO Lectura (id_medidor, id_usuario_asignado, 
-        fecha_creacion, fecha_proxima_lectura, repeticion)
-        VALUES (${medidor}, ${usuario}, CONVERT(DATE, GETDATE()), ${fechaLectura}, ${repeticion});`
+    const { id, medidor, usuario, fechaLectura, repeticion} = req.body;
+    sql.query`INSERT INTO Lectura (id_lectura, id_medidor, id_usuario_asignado, 
+        fecha_creacion, fecha_proxima_lectura, repeticion, estado)
+        VALUES (${id} ,${medidor}, ${usuario}, CONVERT(DATE, GETDATE()), ${fechaLectura}, ${repeticion} , 'P');`
     .then(result => {
-        res.status(200).send('Lectura agregado exitosamente!');
+        res.status(200).json({
+            status: 200,
+            message: 'Lectura agregada exitosamente!'
+        });
     }).catch(err => {
         console.error("Error al hacer consulta:", err);
-        res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
+        res.status(500).json(
+            {
+                message: 'Ocurrió un error al hacer la consulta a la base de datos',
+                error: err,
+                status : 500
+            }
+        );
     });
 });
 

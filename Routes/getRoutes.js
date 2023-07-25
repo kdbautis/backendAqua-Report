@@ -3,11 +3,16 @@ const router = express.Router();
 const sql = require('mssql');
 
 //Reportes
+
 router.get('/getReportes', (req, res) => {
   console.log("getReportes");
-  sql.query`SELECT r.id_reporte, r.descripcion, r.ubicacion, r.estado, r.estado_nuevo, r.id_usuario_asignado, u.nombre as nombrePersonal, u.apellido as apellidoPersonal, r.created_at, r.latitud, r.longitud, r.prioridad 
-  FROM Reporte r, Usuario u
-  WHERE r.id_usuario_asignado = u.id_usuario;`
+  sql.query`SELECT r.id_reporte, r.descripcion, r.ubicacion, r.estado, r.estado_nuevo, r.id_usuario_asignado,
+  r.created_at, r.latitud, r.longitud, r.prioridad,
+  CASE WHEN r.id_usuario_asignado IS NULL THEN '' ELSE u.nombre END as nombrePersonal,
+  CASE WHEN r.id_usuario_asignado IS NULL THEN '' ELSE u.apellido END as apellidoPersonal
+  FROM Reporte r      
+  LEFT JOIN Usuario u ON r.id_usuario_asignado = u.id_usuario;`
+
   .then(result => {
     res.json(result.recordset); // Enviamos los resultados en formato JSON
   }).catch(err => {
@@ -55,16 +60,21 @@ router.get('/getReportesFinalizados', (req, res) => {
 
 //Lecturas
 router.get('/getLecturas', (req, res) => {
-  sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre, fecha_ultima_lectura, 
-      ultima_lectura, fecha_creacion, fecha_proxima_lectura, id_usuario_asignado,
-      Usuario.nombre, Usuario.apellido
+  sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre as nombreMedidor, fecha_ultima_lectura, 
+      ultima_lectura, fecha_creacion, fecha_proxima_lectura, id_usuario_asignado, Lectura.estado as estado,
+      Usuario.nombre as nombrePersonal, Usuario.apellido as apellidoPersonal
       FROM Lectura 
       JOIN Medidor 
       ON Lectura.id_medidor = Medidor.id_medidor
       JOIN Usuario
       ON Lectura.id_usuario_asignado = Usuario.id_usuario;`
   .then(result => {
-    res.json(result.recordset);
+    res.json({
+      status: 200,
+      message: 'Lecturas obtenidas exitosamente!',
+      data: result.recordset,
+      total: result.recordset.length
+    });
   }).catch(err => {
     console.error("Error al hacer consulta:", err);
     res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
@@ -105,6 +115,31 @@ router.get('/getLecturasFinalizadas', (req, res) => {
     res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
   });
 });
+
+//medidor
+router.get('/getMedidores', (req, res) => {
+  sql.query`SELECT id_medidor, nombre, latitud, longitud
+      FROM Medidor;`
+  .then(result => {
+    res.json({
+      status: 200,
+      message: 'Medidores obtenidos exitosamente!',
+      data: result.recordset,
+      total: result.recordset.length
+    }
+    );
+  }).catch(err => {
+    console.error("Error al hacer consulta:", err);
+    res.status(500).json(
+      {
+        message: 'Ocurrió un error al hacer la consulta a la base de datos',
+        error: err,
+        status : 500
+      }
+    );
+  });
+});
+
 
 //Usuarios
 
