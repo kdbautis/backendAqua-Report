@@ -60,7 +60,7 @@ router.get('/getReportesFinalizados', (req, res) => {
 
 //Lecturas
 router.get('/getLecturas', (req, res) => {
-  sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre as nombreMedidor, fecha_ultima_lectura, 
+  sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre as nombreMedidor, fecha_ultima_lectura, repeticion,
       ultima_lectura, fecha_creacion, fecha_proxima_lectura, id_usuario_asignado, Lectura.estado as estado,
       Usuario.nombre as nombrePersonal, Usuario.apellido as apellidoPersonal
       FROM Lectura 
@@ -144,7 +144,7 @@ router.get('/getMedidores', (req, res) => {
 //Usuarios
 
 router.get('/getUsuarios', (req, res) => {
-  sql.query`SELECT id_usuario, nombre, apellido, correo, tipo, Usuario.estado
+  sql.query`SELECT id_usuario, nombre, apellido, correo, tipo, Usuario.estado, Usuario.id_tipo_usuario
       FROM Usuario
       JOIN Tipo_Usuario
       ON Usuario.id_tipo_usuario = Tipo_Usuario.id_tipo_usuario;`

@@ -72,16 +72,26 @@ router.put('/editarUsuario/:id', (req, res) => {
 router.put('/reasignarUsuarioLectura/:id', (req, res) => {
   const id = req.params.id;
   const id_usuario_asignado = req.body.id_usuario_asignado;
+  const fecha = req.body.fechaLectura? req.body.fechaLectura : null;
+  const repeticion = req.body.repeticion? req.body.repeticion : null;
   
-  sql.query`UPDATE Lectura SET id_usuario_asignado = ${id_usuario_asignado} WHERE id_lectura = ${id}`
+  sql.query`UPDATE Lectura SET id_usuario_asignado = ${id_usuario_asignado}, fecha_proxima_lectura = ${fecha}, repeticion = ${repeticion} WHERE id_lectura = ${id}`
   .then(result => {
-    res.status(200).send('Usuario reasignado exitosamente!');
+    res.status(200).json(
+      {
+        status : 200,
+        message: 'Usuario reasignado exitosamente!'
+      });
   }
   ).catch(err => {
     console.error("Error al hacer consulta:", err);
-    res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
-  }
-  );
+    res.status(500).json(
+      {
+        message: 'Ocurrió un error al hacer la consulta a la base de datos',
+        error: err,
+        status : 500
+      });
+    });
 });
 
 router.put('/reasignarUsuarioReporte/:id', (req, res) => {
@@ -100,7 +110,6 @@ router.put('/reasignarUsuarioReporte/:id', (req, res) => {
 });
 
 router.put('/asignarReporte/:id', (req, res) => {
-  console.log('eeeeeeeeeeeee',req.body);
     const id = req.params.id;
     const updateData = req.body;
     

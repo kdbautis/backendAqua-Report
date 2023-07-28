@@ -29,11 +29,20 @@ router.delete('/eliminarLectura/:id', (req, res) => {
     //console.log(id);
     sql.query`DELETE FROM Lectura WHERE id_lectura = ${id};`
     .then(result => {
-        res.status(200).send('Lectura eliminada exitosamente!');
+        res.status(200).json(
+            {
+                status : 200,
+                message: 'Lectura eliminada exitosamente!'
+            });
     }
     ).catch(err => {
         console.error("Error al hacer consulta:", err);
-        res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
+        res.status(500).json(
+            {
+                message: 'Ocurrió un error al hacer la consulta a la base de datos',
+                error: err,
+                status : 500
+            });
     }
     );
 });
