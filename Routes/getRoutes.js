@@ -11,7 +11,8 @@ router.get('/getReportes', (req, res) => {
   CASE WHEN r.id_usuario_asignado IS NULL THEN '' ELSE u.nombre END as nombrePersonal,
   CASE WHEN r.id_usuario_asignado IS NULL THEN '' ELSE u.apellido END as apellidoPersonal
   FROM Reporte r      
-  LEFT JOIN Usuario u ON r.id_usuario_asignado = u.id_usuario;`
+  LEFT JOIN Usuario u ON r.id_usuario_asignado = u.id_usuario
+  ORDER BY r.created_at DESC;`
 
   .then(result => {
     res.json(result.recordset); // Enviamos los resultados en formato JSON
@@ -24,7 +25,8 @@ router.get('/getReportes', (req, res) => {
 router.get('/getReportesNoAsignados', (req, res) => {
   sql.query`SELECT id_reporte, descripcion, ubicacion, estado, estado_nuevo, created_at, latitud, longitud, prioridad
       FROM Reporte
-      WHERE estado_nuevo = 'C';`
+      WHERE estado_nuevo = 'C'
+      ORDER BY created_at DESC;`
   .then(result => {
     res.json(result.recordset); // Enviamos los resultados en formato JSON
   }).catch(err => {
@@ -36,7 +38,8 @@ router.get('/getReportesNoAsignados', (req, res) => {
 router.get('/getReportesAsignados', (req, res) => {
   sql.query`SELECT id_reporte, descripcion, ubicacion, estado, estado_nuevo, created_at, latitud, longitud, prioridad
       FROM Reporte
-      WHERE estado_nuevo != 'C' and estado_nuevo != 'F';`
+      WHERE estado_nuevo != 'C' and estado_nuevo != 'F'
+      ORDER BY created_at DESC;`
   .then(result => {
     res.json(result.recordset);
   }).catch(err => {
@@ -49,7 +52,8 @@ router.get('/getReportesFinalizados', (req, res) => {
   //console.log("getReportesFinalizados");
   sql.query`SELECT id_reporte, descripcion, ubicacion, estado, estado_nuevo, created_at, latitud, longitud, prioridad
       FROM Reporte
-      WHERE estado_nuevo = 'F';`
+      WHERE estado_nuevo = 'F'
+      ORDER BY created_at DESC;`
   .then(result => {
     res.json(result.recordset);
   }).catch(err => {

@@ -9,10 +9,11 @@ router.use(bodyParser.json());
 
 router.post('/agregarUsuario', (req, res) => {
     //console.log(req.body);
-    const { nombre, apellido, correo, tipo, estado } = req.body;
+    const { nombre, apellido, correo, tipo, estado, password } = req.body;
+    const hashedPassword = bcrypt.hashSync(password, 10);
     //console.log(nombre, apellido, correo, tipo, estado);
-    sql.query`INSERT INTO Usuario (nombre, apellido, correo, id_tipo_usuario, estado, created_at)
-        VALUES (${nombre}, ${apellido}, ${correo}, ${tipo}, ${estado}, CURRENT_TIMESTAMP);`
+    sql.query`INSERT INTO Usuario (nombre, apellido, correo, password, id_tipo_usuario, estado, created_at)
+        VALUES (${nombre}, ${apellido}, ${correo},${hashedPassword}, ${tipo}, ${estado}, CURRENT_TIMESTAMP);`
     .then(result => {
         res.status(200).json({
             status: 200,
