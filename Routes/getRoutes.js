@@ -7,7 +7,7 @@ const sql = require('mssql');
 router.get('/getReportes', (req, res) => {
   console.log("getReportes");
   sql.query`SELECT r.id_reporte, r.descripcion, r.ubicacion, r.estado, r.estado_nuevo, r.id_usuario_asignado,
-  r.created_at, r.latitud, r.longitud, r.prioridad,
+  r.created_at, r.latitud, r.longitud, r.prioridad, r.imagen,
   CASE WHEN r.id_usuario_asignado IS NULL THEN '' ELSE u.nombre END as nombrePersonal,
   CASE WHEN r.id_usuario_asignado IS NULL THEN '' ELSE u.apellido END as apellidoPersonal
   FROM Reporte r      
@@ -23,7 +23,7 @@ router.get('/getReportes', (req, res) => {
 });
 
 router.get('/getReportesNoAsignados', (req, res) => {
-  sql.query`SELECT id_reporte, descripcion, ubicacion, estado, estado_nuevo, created_at, latitud, longitud, prioridad
+  sql.query`SELECT id_reporte, descripcion, ubicacion, estado, estado_nuevo, created_at, latitud, longitud, prioridad, imagen
       FROM Reporte
       WHERE estado_nuevo = 'C'
       ORDER BY created_at DESC;`
@@ -36,7 +36,7 @@ router.get('/getReportesNoAsignados', (req, res) => {
 });
 
 router.get('/getReportesAsignados', (req, res) => {
-  sql.query`SELECT id_reporte, descripcion, ubicacion, estado, estado_nuevo, created_at, latitud, longitud, prioridad
+  sql.query`SELECT id_reporte, descripcion, ubicacion, estado, estado_nuevo, created_at, latitud, longitud, prioridad, imagen
       FROM Reporte
       WHERE estado_nuevo != 'C' and estado_nuevo != 'F'
       ORDER BY created_at DESC;`
@@ -50,7 +50,7 @@ router.get('/getReportesAsignados', (req, res) => {
 
 router.get('/getReportesFinalizados', (req, res) => {
   //console.log("getReportesFinalizados");
-  sql.query`SELECT id_reporte, descripcion, ubicacion, estado, estado_nuevo, created_at, latitud, longitud, prioridad
+  sql.query`SELECT id_reporte, descripcion, ubicacion, estado, estado_nuevo, created_at, latitud, longitud, prioridad, imagen
       FROM Reporte
       WHERE estado_nuevo = 'F'
       ORDER BY created_at DESC;`
