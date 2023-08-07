@@ -86,17 +86,22 @@ router.get('/getLecturas', (req, res) => {
 });
 
 router.get('/getLecturasPendientes', (req, res) => {
-  sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre, fecha_ultima_lectura, 
+  sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre as nombreMedidor, fecha_ultima_lectura, 
       ultima_lectura, fecha_creacion, fecha_proxima_lectura, id_usuario_asignado,
-      Usuario.nombre, Usuario.apellido
+      Usuario.nombre as nombrePersonal, Usuario.apellido as apellidoPersonal
       FROM Lectura 
       JOIN Medidor 
       ON Lectura.id_medidor = Medidor.id_medidor
       JOIN Usuario
-      ON Lectura.id_usuario_asignado = Usuario.id_usuario;
+      ON Lectura.id_usuario_asignado = Usuario.id_usuario
       WHERE Lectura.estado != 'F';`
   .then(result => {
-    res.json(result.recordset);
+    res.json({
+      status: 200,
+      message: 'Lecturas obtenidas exitosamente!',
+      data: result.recordset,
+      total: result.recordset.length
+    });
   }).catch(err => {
     console.error("Error al hacer consulta:", err);
     res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
@@ -104,8 +109,8 @@ router.get('/getLecturasPendientes', (req, res) => {
 });
 
 router.get('/getLecturasFinalizadas', (req, res) => {
-  sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre, fecha_ultima_lectura, 
-      ultima_lectura, fecha_creacion, id_usuario_asignado, Usuario.nombre, Usuario.apellido
+  sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre as nombreMedidor, fecha_ultima_lectura, 
+      ultima_lectura, fecha_creacion, id_usuario_asignado, Usuario.nombre as nombrePersonal, Usuario.apellido as apellidoPersonal
       FROM Lectura 
       JOIN Medidor 
       ON Lectura.id_medidor = Medidor.id_medidor
@@ -113,12 +118,42 @@ router.get('/getLecturasFinalizadas', (req, res) => {
       ON Lectura.id_usuario_asignado = Usuario.id_usuario
       WHERE Lectura.estado = 'F';`
   .then(result => {
-    res.json(result.recordset);
+    res.json({
+      status: 200,
+      message: 'Lecturas obtenidas exitosamente!',
+      data: result.recordset,
+      total: result.recordset.length
+    });
   }).catch(err => {
     console.error("Error al hacer consulta:", err);
     res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
   });
 });
+
+router.get('/getLecturaPorId/:id', (req, res) => {
+  const id = req.params.id;
+  sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre as nombreMedidor, fecha_ultima_lectura, repeticion,
+      ultima_lectura, fecha_creacion, fecha_proxima_lectura, id_usuario_asignado, Lectura.estado as estado, 
+      Usuario.nombre as nombrePersonal, Usuario.apellido as apellidoPersonal
+      FROM Lectura
+      JOIN Medidor
+      ON Lectura.id_medidor = Medidor.id_medidor
+      JOIN Usuario
+      ON Lectura.id_usuario_asignado = Usuario.id_usuario
+      WHERE id_lectura = ${id};`
+  .then(result => {
+    res.json({
+      status: 200,
+      message: 'Lectura obtenida exitosamente!',
+      data: result.recordset[0],
+      total: result.recordset.length
+    });
+  }).catch(err => {
+    console.error("Error al hacer consulta:", err);
+    res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
+  });
+});
+
 
 //medidor
 router.get('/getMedidores', (req, res) => {

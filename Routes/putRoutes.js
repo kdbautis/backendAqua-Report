@@ -234,4 +234,37 @@ router.put('/asignarReporte/:id', (req, res) => {
       });
   });
 
+  router.put('/tomarLectura/:id', (req, res) => {
+    const id = req.params.id;
+    const updateData = req.body;
+    
+    const updatePromises = [];
+
+    if (updateData.lectura) {
+      updatePromises.push(
+        sql.query`UPDATE Lectura SET ultima_lectura = ${updateData.lectura}, fecha_ultima_lectura = CONVERT(DATE, GETDATE()), fecha_proxima_lectura = NULL WHERE id_lectura = ${id}`
+      );
+    }
+
+    Promise.all(updatePromises)
+      .then(() => {
+        res.status(200).json(
+          {
+            status : 200,
+            message: 'Lectura actualizada exitosamente!'
+          }
+        );
+      })
+      .catch((err) => {
+        console.error("Error al hacer consulta:", err);
+        res.status(500).json(
+          {
+            message: 'Ocurrió un error al hacer la consulta a la base de datos',
+            error: err,
+            status : 500
+          }
+        );
+      });
+  });
+
 module.exports = router;

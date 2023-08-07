@@ -48,7 +48,6 @@ router.post('/agregarMedidor', (req, res) => {
 });
 
 router.post('/agregarLectura', (req, res) => {
-    //console.log(req.body);
     const { id, medidor, usuario, fechaLectura, repeticion} = req.body;
     sql.query`INSERT INTO Lectura (id_lectura, id_medidor, id_usuario_asignado, 
         fecha_creacion, fecha_proxima_lectura, repeticion, estado)
@@ -57,6 +56,27 @@ router.post('/agregarLectura', (req, res) => {
         res.status(200).json({
             status: 200,
             message: 'Lectura agregada exitosamente!'
+        });
+    }).catch(err => {
+        console.error("Error al hacer consulta:", err);
+        res.status(500).json(
+            {
+                message: 'Ocurrió un error al hacer la consulta a la base de datos',
+                error: err,
+                status : 500
+            }
+        );
+    });
+});
+
+router.post('/agregarLecturaHistorica', (req, res) => {
+    const { id_lectura_historica, medidor, lectura} = req.body;
+    sql.query`INSERT INTO Lecturas_Historicas (id_lectura_historica, id_medidor, fecha_lectura, lectura)
+        VALUES (${id_lectura_historica} ,${medidor}, CURRENT_TIMESTAMP, ${lectura});`
+    .then(result => {
+        res.status(200).json({
+            status: 200,
+            message: 'Lectura histórica agregada exitosamente!'
         });
     }).catch(err => {
         console.error("Error al hacer consulta:", err);
