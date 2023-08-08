@@ -108,7 +108,7 @@ router.get('/getLecturasPendientes', (req, res) => {
 });
 
 router.get('/getLecturasFinalizadas', (req, res) => {
-  sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre, fecha_ultima_lectura, 
+  sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre as nombreMedidor, fecha_ultima_lectura, 
       ultima_lectura, fecha_creacion, id_usuario_asignado, users.name as nombre
       FROM Lectura 
       JOIN Medidor 
