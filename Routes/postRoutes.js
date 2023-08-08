@@ -124,4 +124,27 @@ router.post('/login', (req, res) => {
     });
 });
 
+router.post('/getLecturasHistoricasPorMedidor', (req, res) => {
+    const id = req.body.id; 
+    const updateData = req.body;
+  
+    sql.query`SELECT id_lectura_historica, id_medidor, fecha_lectura, lectura
+        FROM Lecturas_Historicas
+        WHERE id_medidor = ${id}
+        AND fecha_lectura >= ${updateData.fechaInicio}
+        AND fecha_lectura <= ${updateData.fechaFin}
+        ORDER BY fecha_lectura DESC;`
+    .then(result => {
+      res.json({
+        status: 200,
+        message: 'Lecturas históricas obtenidas exitosamente!',
+        data: result.recordset
+      });
+    }).catch(err => {
+      console.error("Error al hacer consulta:", err);
+      res.status(500).send('Ocurrió un error al hacer la consulta a la base de datos');
+    });
+  });
+  
+
 module.exports = router;
