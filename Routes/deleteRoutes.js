@@ -9,7 +9,7 @@ router.use(bodyParser.json());
 router.delete('/eliminarUsuario/:id', (req, res) => {
     const id = req.params.id;
     //console.log(id);
-    sql.query`DELETE FROM Usuario WHERE id_usuario = ${id};`
+    sql.query`DELETE FROM users WHERE id = ${id};`
     .then(result => {
         res.status(200).json(
             {

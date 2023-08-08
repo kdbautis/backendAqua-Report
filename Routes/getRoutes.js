@@ -8,10 +8,9 @@ router.get('/getReportes', (req, res) => {
   console.log("getReportes");
   sql.query`SELECT r.id_reporte, r.descripcion, r.ubicacion, r.estado, r.estado_nuevo, r.id_usuario_asignado,
   r.created_at, r.latitud, r.longitud, r.prioridad, r.imagen,
-  CASE WHEN r.id_usuario_asignado IS NULL THEN '' ELSE u.nombre END as nombrePersonal,
-  CASE WHEN r.id_usuario_asignado IS NULL THEN '' ELSE u.apellido END as apellidoPersonal
+  CASE WHEN r.id_usuario_asignado IS NULL THEN '' ELSE u.name END as nombrePersonal
   FROM Reporte r      
-  LEFT JOIN Usuario u ON r.id_usuario_asignado = u.id_usuario
+  LEFT JOIN users u ON r.id_usuario_asignado = u.id
   ORDER BY r.created_at DESC;`
 
   .then(result => {
@@ -66,12 +65,12 @@ router.get('/getReportesFinalizados', (req, res) => {
 router.get('/getLecturas', (req, res) => {
   sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre as nombreMedidor, fecha_ultima_lectura, repeticion,
       ultima_lectura, fecha_creacion, fecha_proxima_lectura, id_usuario_asignado, Lectura.estado as estado,
-      Usuario.nombre as nombrePersonal, Usuario.apellido as apellidoPersonal
+      users.name as nombrePersonal
       FROM Lectura 
       JOIN Medidor 
       ON Lectura.id_medidor = Medidor.id_medidor
-      JOIN Usuario
-      ON Lectura.id_usuario_asignado = Usuario.id_usuario;`
+      JOIN users
+      ON Lectura.id_usuario_asignado = users.id;`
   .then(result => {
     res.json({
       status: 200,
@@ -88,12 +87,12 @@ router.get('/getLecturas', (req, res) => {
 router.get('/getLecturasPendientes', (req, res) => {
   sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre, fecha_ultima_lectura, 
       ultima_lectura, fecha_creacion, fecha_proxima_lectura, id_usuario_asignado,
-      Usuario.nombre, Usuario.apellido
+      users.name as nombre
       FROM Lectura 
       JOIN Medidor 
       ON Lectura.id_medidor = Medidor.id_medidor
-      JOIN Usuario
-      ON Lectura.id_usuario_asignado = Usuario.id_usuario;
+      JOIN users
+      ON Lectura.id_usuario_asignado = users.id;
       WHERE Lectura.estado != 'F';`
   .then(result => {
     res.json(result.recordset);
@@ -105,12 +104,12 @@ router.get('/getLecturasPendientes', (req, res) => {
 
 router.get('/getLecturasFinalizadas', (req, res) => {
   sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre, fecha_ultima_lectura, 
-      ultima_lectura, fecha_creacion, id_usuario_asignado, Usuario.nombre, Usuario.apellido
+      ultima_lectura, fecha_creacion, id_usuario_asignado, users.name as nombre
       FROM Lectura 
       JOIN Medidor 
       ON Lectura.id_medidor = Medidor.id_medidor
-      JOIN Usuario
-      ON Lectura.id_usuario_asignado = Usuario.id_usuario
+      JOIN users
+      ON Lectura.id_usuario_asignado = users.id
       WHERE Lectura.estado = 'F';`
   .then(result => {
     res.json(result.recordset);
@@ -148,10 +147,10 @@ router.get('/getMedidores', (req, res) => {
 //Usuarios
 
 router.get('/getUsuarios', (req, res) => {
-  sql.query`SELECT id_usuario, nombre, apellido, correo, tipo, Usuario.estado, Usuario.id_tipo_usuario
-      FROM Usuario
+  sql.query`SELECT users.id, name as nombre, email, tipo, users.estado, users.id_tipo_usuario
+      FROM users
       JOIN Tipo_Usuario
-      ON Usuario.id_tipo_usuario = Tipo_Usuario.id_tipo_usuario;`
+      ON users.id_tipo_usuario = Tipo_Usuario.id_tipo_usuario;`
   .then(result => {
     res.json(result.recordset);
   }).catch(err => {
@@ -162,12 +161,12 @@ router.get('/getUsuarios', (req, res) => {
 
 router.get('/getLecturasPendientes', (req, res) => {
   sql.query`SELECT id_lectura, Medidor.id_medidor, latitud, longitud, fecha_ultima_lectura, 
-      ultima_lectura, fecha_creacion, fecha_proxima_lectura, Usuario.nombre, apellido
+      ultima_lectura, fecha_creacion, fecha_proxima_lectura, users.nombre
       FROM Lectura
       Join Medidor
       ON Lectura.id_medidor = Medidor.id_medidor
-      Join Usuario
-      ON Lectura.id_usuario_asignado = Usuario.id_usuario
+      Join users
+      ON Lectura.id_usuario_asignado = users.id
       WHERE fecha_proxima_lectura != NULL;`
   .then(result => {
     res.json(result.recordset);
@@ -179,12 +178,12 @@ router.get('/getLecturasPendientes', (req, res) => {
 
 router.get('/getLecturasFinalizadas', (req, res) => {
   sql.query`SELECT id_lectura, Medidor.id_medidor, latitud, longitud, fecha_ultima_lectura, 
-      ultima_lectura, fecha_creacion, Usuario.nombre, apellido
+      ultima_lectura, fecha_creacion, users.name as nombre
       FROM Lectura
       Join Medidor
       ON Lectura.id_medidor = Medidor.id_medidor
-      Join Usuario
-      ON Lectura.id_usuario_asignado = Usuario.id_usuario
+      Join users
+      ON Lectura.id_usuario_asignado = users.id
       WHERE fecha_proxima_lectura = NULL;`
   .then(result => {
     res.json(result.recordset);
@@ -195,12 +194,12 @@ router.get('/getLecturasFinalizadas', (req, res) => {
 });
 
 router.get('/getPersonal', (req, res) => {
-  sql.query`SELECT id_usuario, nombre, apellido, correo, tipo, Usuario.estado
-      FROM Usuario
+  sql.query`SELECT id, name as nombre, email, tipo, users.estado
+      FROM users
       JOIN Tipo_Usuario
-      ON Usuario.id_tipo_usuario = Tipo_Usuario.id_tipo_usuario
+      ON users.id_tipo_usuario = Tipo_Usuario.id_tipo_usuario
       AND Tipo_Usuario.tipo = 'Personal'
-      WHERE Usuario.estado = 'A';`
+      WHERE users.estado = 'A';`
   .then(result => {
     res.json(result.recordset);
   }).catch(err => {
