@@ -17,31 +17,25 @@ router.put('/editarUsuario/:id', (req, res) => {
     //#region 
     if (updateData.nombre) {
       updatePromises.push(
-        sql.query`UPDATE Usuario SET nombre = ${updateData.nombre}, updated_at = CURRENT_TIMESTAMP WHERE id_usuario = ${id}`
+        sql.query`UPDATE users SET name = ${updateData.nombre}, updated_at = CURRENT_TIMESTAMP WHERE id = ${id}`
       );
-    }
-  
-    if (updateData.apellido) {
-      updatePromises.push(
-        sql.query`UPDATE Usuario SET apellido = ${updateData.apellido}, updated_at = CURRENT_TIMESTAMP WHERE id_usuario = ${id}`
-      );
-    }
+    } 
   
     if (updateData.correo) {
       updatePromises.push(
-        sql.query`UPDATE Usuario SET correo = ${updateData.correo}, updated_at = CURRENT_TIMESTAMP WHERE id_usuario = ${id}`
+        sql.query`UPDATE users SET email = ${updateData.correo}, updated_at = CURRENT_TIMESTAMP WHERE id = ${id}`
       );
     }
   
     if (updateData.tipo) {
       updatePromises.push(
-        sql.query`UPDATE Usuario SET id_tipo_usuario = ${updateData.tipo}, updated_at = CURRENT_TIMESTAMP WHERE id_usuario = ${id}`
+        sql.query`UPDATE users SET id_tipo_usuario = ${updateData.tipo}, updated_at = CURRENT_TIMESTAMP WHERE id = ${id}`
       );
     }
   
     if (updateData.estado) {
       updatePromises.push(
-        sql.query`UPDATE Usuario SET estado = ${updateData.estado}, updated_at = CURRENT_TIMESTAMP WHERE id_usuario = ${id}`
+        sql.query`UPDATE users SET estado = ${updateData.estado}, updated_at = CURRENT_TIMESTAMP WHERE id = ${id}`
       );
     }
     //#endregion
@@ -88,25 +82,19 @@ router.put('/editarPerfil/:id', (req, res) => {
     //#region 
     if (updateData.nombre) {
       updatePromises.push(
-        sql.query`UPDATE Usuario SET nombre = ${updateData.nombre}, updated_at = CURRENT_TIMESTAMP WHERE id_usuario = ${id}`
-      );
-    }
-  
-    if (updateData.apellido) {
-      updatePromises.push(
-        sql.query`UPDATE Usuario SET apellido = ${updateData.apellido}, updated_at = CURRENT_TIMESTAMP WHERE id_usuario = ${id}`
+        sql.query`UPDATE users SET name = ${updateData.nombre}, updated_at = CURRENT_TIMESTAMP WHERE id = ${id}`
       );
     }
   
     if (updateData.correo) {
       updatePromises.push(
-        sql.query`UPDATE Usuario SET correo = ${updateData.correo}, updated_at = CURRENT_TIMESTAMP WHERE id_usuario = ${id}`
+        sql.query`UPDATE users SET email = ${updateData.correo}, updated_at = CURRENT_TIMESTAMP WHERE id = ${id}`
       );
     }
 
     if (updateData.passwordNueva && updateData.passwordActual) {
       sql.query`SELECT password
-      FROM Usuario WHERE id_usuario = ${id};`
+      FROM users WHERE id = ${id};`
       .then(result => {
           const inputPassword = updateData.passwordActual;
           const hashedPasswordFromDatabase = result.recordset[0].password;
@@ -114,7 +102,7 @@ router.put('/editarPerfil/:id', (req, res) => {
           if (bcrypt.compareSync(inputPassword, hashedPasswordFromDatabase)) {
           const hashedPassword = bcrypt.hashSync(updateData.passwordNueva, 10);
           updatePromises.push(
-            sql.query`UPDATE Usuario SET password = ${hashedPassword}, updated_at = CURRENT_TIMESTAMP WHERE id_usuario = ${id}`
+            sql.query`UPDATE users SET password = ${hashedPassword}, updated_at = CURRENT_TIMESTAMP WHERE id = ${id}`
           );
           } else{
             res.status(400).json(

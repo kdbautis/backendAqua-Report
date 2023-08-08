@@ -9,11 +9,11 @@ router.use(bodyParser.json());
 
 router.post('/agregarUsuario', (req, res) => {
     //console.log(req.body);
-    const { nombre, apellido, correo, tipo, estado, password } = req.body;
+    const { nombre, correo, tipo, estado, password } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 10);
     //console.log(nombre, apellido, correo, tipo, estado);
-    sql.query`INSERT INTO Usuario (nombre, apellido, correo, password, id_tipo_usuario, estado, created_at)
-        VALUES (${nombre}, ${apellido}, ${correo},${hashedPassword}, ${tipo}, ${estado}, CURRENT_TIMESTAMP);`
+    sql.query`INSERT INTO users (name, email, password, id_tipo_usuario, estado, created_at)
+        VALUES (${nombre}, ${correo},${hashedPassword}, ${tipo}, ${estado}, CURRENT_TIMESTAMP);`
     .then(result => {
         res.status(200).json({
             status: 200,
@@ -94,8 +94,8 @@ router.post('/agregarLecturaHistorica', (req, res) => {
 router.post('/login', (req, res) => {
     console.log(req.body);
     const { correo, password } = req.body;
-    sql.query`SELECT u.password, u.id_usuario, u.nombre, u.apellido, u.correo, u.estado, t.tipo, t.id_tipo_usuario
-     FROM Usuario u, Tipo_Usuario t WHERE u.correo = ${correo} AND u.estado = 'A' AND u.id_tipo_usuario = t.id_tipo_usuario AND t.tipo = 'ADMIN';`
+    sql.query`SELECT u.password, u.id, u.name, u.email, u.estado, t.tipo, t.id_tipo_usuario
+     FROM users u, Tipo_Usuario t WHERE u.email = ${correo} AND u.estado = 'A' AND u.id_tipo_usuario = t.id_tipo_usuario AND t.tipo = 'ADMIN';`
     .then(result => {
         const inputPassword = password;
         const hashedPasswordFromDatabase = result.recordset[0].password;
