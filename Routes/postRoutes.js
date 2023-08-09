@@ -70,25 +70,32 @@ router.post('/agregarLectura', (req, res) => {
 });
 
 router.post('/agregarLecturaHistorica', (req, res) => {
-    const { id_lectura_historica, medidor, lectura} = req.body;
-    sql.query`INSERT INTO Lecturas_Historicas (id_lectura_historica, id_medidor, fecha_lectura, lectura)
-        VALUES (${id_lectura_historica} ,${medidor}, CURRENT_TIMESTAMP, ${lectura});`
+    const { medidor, lectura } = req.body;
+    
+    sql.query`SELECT MAX(id_lectura_historica) AS maxID FROM Lecturas_Historicas`
+    .then(result => {
+        let nextID = result.recordset[0].maxID + 1;
+
+        return sql.query`INSERT INTO Lecturas_Historicas (id_lectura_historica, id_medidor, fecha_lectura, lectura)
+                         VALUES (${nextID} ,${medidor}, CURRENT_TIMESTAMP, ${lectura});`
+
+    })
     .then(result => {
         res.status(200).json({
             status: 200,
             message: 'Lectura histórica agregada exitosamente!'
         });
-    }).catch(err => {
+    })
+    .catch(err => {
         console.error("Error al hacer consulta:", err);
-        res.status(500).json(
-            {
-                message: 'Ocurrió un error al hacer la consulta a la base de datos',
-                error: err,
-                status : 500
-            }
-        );
+        res.status(500).json({
+            message: 'Ocurrió un error al hacer la consulta a la base de datos',
+            error: err,
+            status: 500
+        });
     });
 });
+
 
 //login
 router.post('/login', (req, res) => {
