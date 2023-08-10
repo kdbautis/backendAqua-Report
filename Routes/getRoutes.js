@@ -85,15 +85,15 @@ router.get('/getLecturas', (req, res) => {
 });
 
 router.get('/getLecturasPendientes', (req, res) => {
-  sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre as nombreMedidor, fecha_ultima_lectura, 
-      ultima_lectura, fecha_creacion, fecha_proxima_lectura, id_usuario_asignado,
-      users.name as nombre
+  sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre as nombreMedidor, fecha_ultima_lectura, repeticion,
+  ultima_lectura, fecha_creacion, fecha_proxima_lectura, id_usuario_asignado, Lectura.estado as estado,
+  users.name as nombrePersonal
       FROM Lectura 
       JOIN Medidor 
       ON Lectura.id_medidor = Medidor.id_medidor
       JOIN users
-      ON Lectura.id_usuario_asignado = users.id;
-      WHERE Lectura.estado != 'F';`
+      ON Lectura.id_usuario_asignado = users.id
+      WHERE Lectura.estado != 'F' AND fecha_proxima_lectura is not NULL;`
   .then(result => {
     res.json({
       status: 200,
@@ -109,7 +109,7 @@ router.get('/getLecturasPendientes', (req, res) => {
 
 router.get('/getLecturasFinalizadas', (req, res) => {
   sql.query`SELECT	id_lectura, Lectura.id_medidor, Medidor.nombre as nombreMedidor, fecha_ultima_lectura, 
-      ultima_lectura, fecha_creacion, id_usuario_asignado, users.name as nombre
+      ultima_lectura, fecha_creacion, id_usuario_asignado, users.name as nombrePersonal
       FROM Lectura 
       JOIN Medidor 
       ON Lectura.id_medidor = Medidor.id_medidor
