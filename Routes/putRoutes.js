@@ -153,6 +153,8 @@ router.put('/reasignarUsuarioLectura/:id', (req, res) => {
   const id_usuario_asignado = req.body.id_usuario_asignado;
   const fecha = req.body.fechaLectura? req.body.fechaLectura : null;
   const repeticion = req.body.repeticion? req.body.repeticion : null;
+  console.log(req.body);
+  console.log(req.params);
   
   sql.query`UPDATE Lectura SET id_usuario_asignado = ${id_usuario_asignado}, fecha_proxima_lectura = ${fecha}, repeticion = ${repeticion} WHERE id_lectura = ${id}`
   .then(result => {
