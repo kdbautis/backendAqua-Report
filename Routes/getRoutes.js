@@ -266,6 +266,32 @@ router.get('/getMedidores', (req, res) => {
   });
 });
 
+router.get('/getLecturasPorMedidor/:id', (req, res) => {
+  const id = req.params.id;
+  sql.query`SELECT id_lectura, id_medidor, fecha_ultima_lectura, users.name as nombrePersonal, ultima_lectura, fecha_creacion, fecha_proxima_lectura, id_usuario_asignado, Lectura.estado
+      FROM Lectura, users
+      WHERE id_medidor = ${id}
+      AND Lectura.id_usuario_asignado = users.id;`
+  .then(result => {
+    res.json({
+      status: 200,
+      message: 'Lecturas obtenidas exitosamente!',
+      data: result.recordset,
+      total: result.recordset.length
+    }
+    );
+  }).catch(err => {
+    console.error("Error al hacer consulta:", err);
+    res.status(500).json(
+      {
+        message: 'Ocurrió un error al hacer la consulta a la base de datos',
+        error: err,
+        status : 500
+      }
+    );
+  });
+});
+
 
 //Usuarios
 

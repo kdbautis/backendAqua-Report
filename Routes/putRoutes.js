@@ -290,4 +290,49 @@ router.put('/asignarReporte/:id', (req, res) => {
       });
   });
 
+  router.put('/editarMedidor/:id', (req, res) => {
+    const id = req.params.id;
+    const updateData = req.body;
+    
+    const updatePromises = [];
+
+    if (updateData.nombre) {
+      updatePromises.push(
+        sql.query`UPDATE Medidor SET nombre = ${updateData.nombre} WHERE id_medidor = ${id}`
+      );
+    }
+
+    if (updateData.latitud) {
+      updatePromises.push(
+        sql.query`UPDATE Medidor SET latitud = ${updateData.latitud} WHERE id_medidor = ${id}`
+      );
+    }
+
+    if (updateData.longitud) {
+      updatePromises.push(
+        sql.query`UPDATE Medidor SET longitud = ${updateData.longitud} WHERE id_medidor = ${id}`
+      );
+    }
+
+    Promise.all(updatePromises)
+      .then(() => {
+        res.status(200).json(
+          {
+            status : 200,
+            message: 'Medidor actualizado exitosamente!'
+          }
+        );
+      })
+      .catch((err) => {
+        console.error("Error al hacer consulta:", err);
+        res.status(500).json(
+          {
+            message: 'Ocurrió un error al hacer la consulta a la base de datos',
+            error: err,
+            status : 500
+          }
+        );
+      });
+  });
+
 module.exports = router;
